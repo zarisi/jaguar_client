@@ -1,16 +1,14 @@
 # teja_http_json
 
-A library for Dart developers. It is awesome.
+A small utility library over Dart's package:http to make JSON request simpler
 
 ## Usage
 
 A simple usage example:
 
-    import 'package:teja_http_json/teja_http_json.dart';
+```dart
 
-    main() {
-      var awesome = new Awesome();
-    }
+```
 
 ## Features and bugs
 

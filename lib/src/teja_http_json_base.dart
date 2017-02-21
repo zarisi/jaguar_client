@@ -3,7 +3,6 @@
 
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:http/browser_client.dart' as http;
 import 'dart:convert';
 
 /// Response of the JSON request
@@ -37,7 +36,8 @@ class JsonClient {
 
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
   Future<JsonResponse> getJson(url,
-      {Map<String, String> headers: const {}, Encoding encoding}) async {
+      {Map<String, String> headers, Encoding encoding}) async {
+    if(headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     http.Response resp = await client.get(url, headers: headers);
@@ -55,14 +55,15 @@ class JsonClient {
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
   Future<JsonResponse> postJson(url,
-      {Map<String, String> headers: const {},
+      {Map<String, String> headers,
       dynamic body,
       Encoding encoding}) async {
+    if(headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     String bodyStr;
     if (body != null) {
-      JSON.encode(body);
+      bodyStr = JSON.encode(body);
     }
 
     http.Response resp =
@@ -81,14 +82,15 @@ class JsonClient {
 
   /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
   Future<JsonResponse> putJson(url,
-      {Map<String, String> headers: const {},
+      {Map<String, String> headers,
       dynamic body,
       Encoding encoding}) async {
+    if(headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     String bodyStr;
     if (body != null) {
-      JSON.encode(body);
+      bodyStr = JSON.encode(body);
     }
 
     http.Response resp = await client.put(url, headers: headers, body: bodyStr);
@@ -106,7 +108,8 @@ class JsonClient {
 
   /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
   Future<JsonResponse> deleteJson(url,
-      {Map<String, String> headers: const {}, Encoding encoding}) async {
+      {Map<String, String> headers, Encoding encoding}) async {
+    if(headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     http.Response resp = await client.delete(url, headers: headers);
