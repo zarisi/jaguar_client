@@ -2,16 +2,36 @@
 
 A small utility library over Dart's package:http to make JSON request simpler
 
-## Usage
+# Usage
 
-A simple usage example:
+## Get request
 
 ```dart
-
+final JsonResponse resp =
+    await client.get('http://localhost:8080/api/list');
+print(resp.body);
 ```
 
-## Features and bugs
+## Post request
 
-Please file feature requests and bugs at the [issue tracker][tracker].
+```dart
+final JsonResponse resp = await client
+    .post('http://localhost:8080/api/map', body: {'posting': 'hello'});
+print(resp.body);
+```
 
-[tracker]: http://example.com/issues/replaceme
+## Put request
+
+```dart
+final JsonResponse resp = await client
+    .put('http://localhost:8080/api/map', body: {'putting': 'hello'});
+print(resp.body);
+```
+
+## Delete request
+
+```dart
+final JsonResponse resp =
+    await client.delete('http://localhost:8080/api/map/123?query=why');
+print(resp.body);
+```

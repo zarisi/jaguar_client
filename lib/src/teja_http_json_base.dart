@@ -19,7 +19,8 @@ class JsonResponse {
   /// JSON decoded body
   final body;
 
-  const JsonResponse(this.statusCode, this.reasonPhrase, this.headers, this.body);
+  const JsonResponse(
+      this.statusCode, this.reasonPhrase, this.headers, this.body);
 }
 
 class JsonClient {
@@ -35,9 +36,9 @@ class JsonClient {
   }
 
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> getJson(url,
+  Future<JsonResponse> get(url,
       {Map<String, String> headers, Encoding encoding}) async {
-    if(headers is! Map) headers = <String, String>{};
+    if (headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     http.Response resp = await client.get(url, headers: headers);
@@ -54,11 +55,9 @@ class JsonClient {
   }
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> postJson(url,
-      {Map<String, String> headers,
-      dynamic body,
-      Encoding encoding}) async {
-    if(headers is! Map) headers = <String, String>{};
+  Future<JsonResponse> post(url,
+      {Map<String, String> headers, dynamic body, Encoding encoding}) async {
+    if (headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     String bodyStr;
@@ -67,7 +66,7 @@ class JsonClient {
     }
 
     http.Response resp =
-    await client.post(url, headers: headers, body: bodyStr);
+        await client.post(url, headers: headers, body: bodyStr);
 
     final String contentType = headers['Content-type'];
     if (contentType != 'application/json' && contentType != 'text/json') {
@@ -81,11 +80,9 @@ class JsonClient {
   }
 
   /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> putJson(url,
-      {Map<String, String> headers,
-      dynamic body,
-      Encoding encoding}) async {
-    if(headers is! Map) headers = <String, String>{};
+  Future<JsonResponse> put(url,
+      {Map<String, String> headers, dynamic body, Encoding encoding}) async {
+    if (headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     String bodyStr;
@@ -107,9 +104,9 @@ class JsonClient {
   }
 
   /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> deleteJson(url,
+  Future<JsonResponse> delete(url,
       {Map<String, String> headers, Encoding encoding}) async {
-    if(headers is! Map) headers = <String, String>{};
+    if (headers is! Map) headers = <String, String>{};
     _addJSONHeaders(headers);
 
     http.Response resp = await client.delete(url, headers: headers);
