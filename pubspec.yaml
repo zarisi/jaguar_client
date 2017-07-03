@@ -1,6 +1,6 @@
 name: teja_http_json
-description: A small utility library over Dart's package:http to make JSON request simpler
-version: 0.1.0
+description: Write concise JSON API clients
+version: 0.1.1
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 homepage: https://github.com/tejainece/teja_http_json
 

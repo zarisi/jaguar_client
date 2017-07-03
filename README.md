@@ -1,6 +1,6 @@
 # teja_http_json
 
-A small utility library over Dart's package:http to make JSON request simpler
+Write concise JSON API clients
 
 # Usage
 
