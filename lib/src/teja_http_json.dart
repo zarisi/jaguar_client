@@ -20,7 +20,7 @@ class JsonClient {
   JsonClient(this.client, {this.repo});
 
   void _addJSONHeaders(Map<String, String> headers) {
-    headers['Content-type'] = 'application/json';
+    headers['content-type'] = 'application/json';
     headers['Accept'] = 'application/json';
     headers["X-Requested-With"] = "XMLHttpRequest";
   }
@@ -33,11 +33,11 @@ class JsonClient {
 
     http.Response resp = await client.get(url, headers: headers);
 
-    final String contentType = headers['Content-type'];
-    if (contentType != 'application/json' && contentType != 'text/json') {
-      throw new Exception(
-          "Invalid mimetype $contentType returned for JSON request!");
-    }
+//    String contentType = resp.headers['content-type'];
+//    if (contentType != 'application/json' && contentType != 'text/json') {
+//      throw new Exception(
+//          "Invalid mimetype $contentType returned for JSON request!");
+//    }
 
     return new JsonResponse(resp, repo);
   }
@@ -64,11 +64,11 @@ class JsonClient {
     http.Response resp =
         await client.post(url, headers: headers, body: bodyStr);
 
-    final String contentType = headers['Content-type'];
-    if (contentType != 'application/json' && contentType != 'text/json') {
-      throw new Exception(
-          "Invalid mimetype $contentType returned for JSON request!");
-    }
+//    final String contentType = resp.headers['content-type'];
+//    if (contentType != 'application/json' && contentType != 'text/json') {
+//      throw new Exception(
+//          "Invalid mimetype $contentType returned for JSON request!");
+//    }
 
     return new JsonResponse(resp, repo);
   }
@@ -94,11 +94,11 @@ class JsonClient {
 
     http.Response resp = await client.put(url, headers: headers, body: bodyStr);
 
-    final String contentType = headers['Content-type'];
-    if (contentType != 'application/json' && contentType != 'text/json') {
-      throw new Exception(
-          "Invalid mimetype $contentType returned for JSON request!");
-    }
+//    final String contentType = resp.headers['content-type'];
+//    if (contentType != 'application/json' && contentType != 'text/json') {
+//      throw new Exception(
+//          "Invalid mimetype $contentType returned for JSON request!");
+//    }
 
     return new JsonResponse(resp, repo);
   }
@@ -111,11 +111,11 @@ class JsonClient {
 
     http.Response resp = await client.delete(url, headers: headers);
 
-    final String contentType = headers['Content-type'];
-    if (contentType != 'application/json' && contentType != 'text/json') {
-      throw new Exception(
-          "Invalid mimetype $contentType returned for JSON request!");
-    }
+//    final String contentType = resp.headers['content-type'];
+//    if (contentType != 'application/json' && contentType != 'text/json') {
+//      throw new Exception(
+//          "Invalid mimetype $contentType returned for JSON request!");
+//    }
 
     return new JsonResponse(resp, repo);
   }
