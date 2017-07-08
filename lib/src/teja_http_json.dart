@@ -57,7 +57,7 @@ class JsonClient {
         bodyStr = JSON.encode(body);
       } else {
         if(repo == null) throw new Exception('Repo not provided!');
-        bodyStr = repo.serialize(body);
+        bodyStr = repo.serialize(body, withType: true);
       }
     }
 
@@ -88,7 +88,7 @@ class JsonClient {
         bodyStr = JSON.encode(body);
       } else {
         if(repo == null) throw new Exception('Repo not provided!');
-        bodyStr = repo.serialize(body);
+        bodyStr = repo.serialize(body, withType: true);
       }
     }
 
