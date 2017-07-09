@@ -35,5 +35,5 @@ class JsonResponse {
     return repo.deserialize(body);
   }
 
-  dynamic deserialize() => repo.deserialize(body);
+  dynamic deserialize() => repo.deserialize(inner.body);
 }
