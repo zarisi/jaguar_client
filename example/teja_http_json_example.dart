@@ -5,7 +5,6 @@ import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:jaguar/jaguar.dart';
-import 'package:jaguar_reflect/jaguar_reflect.dart';
 import 'package:teja_http_json/teja_http_json.dart';
 
 @Api(path: '/api')
@@ -40,7 +39,7 @@ class ExampleApi {
 
 Future serve() async {
   Jaguar server = new Jaguar();
-  server.addApi(reflectJaguar(new ExampleApi()));
+  server.addApiReflected(new ExampleApi());
   await server.serve();
 }
 
