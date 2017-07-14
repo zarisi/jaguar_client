@@ -157,7 +157,7 @@ class JsonClient {
 
     headers[HttpHeaders.AUTHORIZATION] = auth.toString();
 
-    final JsonResponse resp = await postForm(url, body: body, headers: headers);
+    final JsonResponse resp = await post(url, body: body, headers: headers);
     //TODO
     return resp;
   }

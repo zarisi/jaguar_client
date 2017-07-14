@@ -11,13 +11,19 @@ class JsonResponse {
   /// Response headers
   Map<String, String> get headers => inner.headers;
 
+  /// Body as [String]
+  String get bodyStr => inner.body;
+
   /// JSON decoded body
   dynamic _body;
 
+  /// Body decoded into Dart built-in object
   dynamic get body => _body;
 
+  /// Underlying [http.Response] object
   final http.Response inner;
 
+  /// Json serializer repository
   final JsonRepo repo;
 
   JsonResponse(this.inner, this.repo) {
