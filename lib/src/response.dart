@@ -30,10 +30,10 @@ class JsonResponse {
 
   T withSerializer<T>(Serializer<T> serializer) => serializer.fromMap(body);
 
-  T withRepo<T>(JsonRepo repo) {
-    if(repo == null) throw new Exception('Repo not provided!');
-    return repo.deserialize(body);
+  T withRepo<T>(JsonRepo repo, {Type type}) {
+    if (repo == null) throw new Exception('Repo not provided!');
+    return repo.deserialize(body, type: type);
   }
 
-  dynamic deserialize() => repo.deserialize(inner.body);
+  dynamic deserialize({Type type}) => repo.deserialize(inner.body, type: type);
 }

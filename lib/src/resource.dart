@@ -41,7 +41,7 @@ class ResourceClient<IdType, ModelType extends Idied<IdType>> {
   Future<IdType> insert(ModelType model) async {
     final url = Uri.parse(fullBasePath);
     final JsonResponse resp =
-    await _jC.post(url, body: serializer.toMap(model));
+        await _jC.post(url, body: serializer.toMap(model));
     if (stringToId == null) {
       if (IdType == String) return resp.body;
       throw new Exception("stringToId converter must be specified!");
