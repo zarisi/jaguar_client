@@ -1,8 +1,8 @@
-name: teja_http_json
+name: jaguar_client
 description: Write concise JSON API clients
-version: 0.1.6-dev
+version: 0.0.1-dev
 author: Ravi Teja Gudapati <tejainece@gmail.com>
-homepage: https://github.com/tejainece/teja_http_json
+homepage: https://github.com/Jaguar-dart/jaguar_client
 
 documentation:
 

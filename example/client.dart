@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:jaguar/jaguar.dart';
-import 'package:teja_http_json/teja_http_json.dart';
+import 'package:jaguar_client/jaguar_client.dart';
 
 @Api(path: '/api')
 class ExampleApi {

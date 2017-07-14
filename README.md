@@ -1,10 +1,30 @@
-# teja_http_json
+# jaguar_client
 
-Write concise JSON API clients
+Concise JSON client library for Dart and Jaguar based on `package:http`
+
+- Built-in PODO serialization using [`jaguar_serializer`](https://github.com/Jaguar-dart/jaguar_serializer)
+- Simple and intuitive API
+- Various authentication support
+    - JSON authentication
+    - url-encoded-form authentication
+    - Basic authentication
+    - Planned
+        - Facebook oauth
+        - Google oauth
+        - Google 2FA
+- Session management
+    - Browser: LocalStorage
+    - Flutter: SharedPreferences
+    - IO: DB, File
+- JWT authentication support
+- `ResourceClient` to access `DataStore` or a resource
+- `BasedJsonClient` and `PathJsonClient` enables writing concise REST calls
 
 # Usage
 
-## Get request
+## Basic requests
+
+### Get request
 
 ```dart
 final JsonResponse resp =
@@ -12,7 +32,7 @@ final JsonResponse resp =
 print(resp.body);
 ```
 
-## Post request
+### Post request
 
 ```dart
 final JsonResponse resp = await client
@@ -20,7 +40,7 @@ final JsonResponse resp = await client
 print(resp.body);
 ```
 
-## Put request
+### Put request
 
 ```dart
 final JsonResponse resp = await client
@@ -28,10 +48,22 @@ final JsonResponse resp = await client
 print(resp.body);
 ```
 
-## Delete request
+### Delete request
 
 ```dart
 final JsonResponse resp =
     await client.delete('http://localhost:8080/api/map/123?query=why');
 print(resp.body);
 ```
+
+## Automatic serialization
+
+> TODO
+
+## Authentication
+
+> TODO
+
+## Session management
+
+> TODO
