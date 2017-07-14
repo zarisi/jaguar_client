@@ -18,7 +18,7 @@ Concise JSON client library for Dart and Jaguar based on `package:http`
     - IO: DB, File
 - JWT authentication support
 - `ResourceClient` to access `DataStore` or a resource
-- `BasedJsonClient` and `PathJsonClient` enables writing concise REST calls
+- `SerializedJsonClient` enables writing concise REST calls
 
 # Usage
 

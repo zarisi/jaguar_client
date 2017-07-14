@@ -6,15 +6,28 @@ class JsonClient {
 
   final JsonRepo repo;
 
-  JsonClient(this.client, {JsonRepo repo}) : repo = repo ?? new JsonRepo();
+  final String basePath;
 
-  void _addJSONHeaders(Map<String, String> headers) {
-    headers['content-type'] = 'application/json';
-    headers['Accept'] = 'application/json';
+  final bool manageCookie;
+
+  final CookieStore _cookieStore = new CookieStore();
+
+  JsonClient(this.client,
+      {JsonRepo repo, this.manageCookie: false, this.basePath})
+      : repo = repo ?? new JsonRepo();
+
+  void _addHeaders(final Map<String, String> headers,
+      {bool isReqJson: true, bool isRespJson: true}) {
+    if (isReqJson) headers['content-type'] = 'application/json';
+    if (isRespJson) headers['Accept'] = 'application/json';
     headers["X-Requested-With"] = "XMLHttpRequest";
+    if (manageCookie) headers['Cookie'] = _cookieStore.header;
   }
 
-  void _isRespJson(http.Response resp) {
+  void _processResp(http.Response resp) {
+    if (manageCookie) {
+      _cookieStore.addResponse(resp);
+    }
     //    String contentType = resp.headers['content-type'];
 //    if (contentType != 'application/json' && contentType != 'text/json') {
 //      throw new Exception(
@@ -23,20 +36,23 @@ class JsonClient {
   }
 
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> get(url, {Map<String, String> headers}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+  Future<JsonResponse> get(url, {final Map<String, String> headers}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders);
 
-    http.Response resp = await client.get(url, headers: headers);
-    _isRespJson(resp);
+    http.Response resp = await client.get(url, headers: reqHeaders);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> post(url, {Map<String, String> headers, body}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+  Future<JsonResponse> post(url,
+      {final Map<String, String> headers, body}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders);
 
     String bodyStr;
     if (body != null) {
@@ -44,43 +60,48 @@ class JsonClient {
     }
 
     http.Response resp =
-        await client.post(url, headers: headers, body: bodyStr);
-    _isRespJson(resp);
+        await client.post(url, headers: reqHeaders, body: bodyStr);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
 
   /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> put(url, {Map<String, String> headers, body}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+  Future<JsonResponse> put(url,
+      {final Map<String, String> headers, body}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders);
 
     String bodyStr;
     if (body != null) {
       bodyStr = repo.serialize(body, withType: true);
     }
 
-    http.Response resp = await client.put(url, headers: headers, body: bodyStr);
-    _isRespJson(resp);
+    http.Response resp =
+        await client.put(url, headers: reqHeaders, body: bodyStr);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
 
   /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> delete(url, {Map<String, String> headers}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+  Future<JsonResponse> delete(url, {final Map<String, String> headers}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders);
 
-    http.Response resp = await client.delete(url, headers: headers);
-    _isRespJson(resp);
+    http.Response resp = await client.delete(url, headers: reqHeaders);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
 
   Future<JsonResponse> postForm(url,
-      {Map<String, String> headers, body}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+      {final Map<String, String> headers, body}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders, isReqJson: false);
 
     Map<String, dynamic> bodyMap;
     if (body != null) {
@@ -88,8 +109,8 @@ class JsonClient {
     }
 
     http.Response resp =
-        await client.post(url, headers: headers, body: bodyMap);
-    _isRespJson(resp);
+        await client.post(url, headers: reqHeaders, body: bodyMap);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
@@ -101,18 +122,20 @@ class JsonClient {
   /// [headers] parameters can be used to add HTTP headers
   /// [body] can be a Dart built-in type or any PODO object. If it is PODO, [repo]
   /// is used to serialize the object
-  /// []
-  Future<JsonResponse> putForm(url, {Map<String, String> headers, body}) async {
-    if (headers is! Map) headers = <String, String>{};
-    _addJSONHeaders(headers);
+  Future<JsonResponse> putForm(url,
+      {final Map<String, String> headers, body}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    _addHeaders(reqHeaders);
 
-    String bodyStr;
+    Map<String, dynamic> bodyMap;
     if (body != null) {
-      bodyStr = repo.serialize(body, withType: true);
+      bodyMap = repo.to(body, withType: true);
     }
 
-    http.Response resp = await client.put(url, headers: headers, body: bodyStr);
-    _isRespJson(resp);
+    http.Response resp =
+        await client.put(url, headers: reqHeaders, body: bodyMap);
+    _processResp(resp);
 
     return new JsonResponse(resp, repo);
   }
@@ -123,7 +146,8 @@ class JsonClient {
   /// \param[in] password Password for authentication
   /// \param[in] payload Extra payload
   Future<JsonResponse> authenticate(AuthPayload payload,
-      {url: '/api/login', Map<String, String> headers}) async {
+      {url: '/api/login', final Map<String, String> headers}) async {
+    if (url is String && basePath is String) url = basePath + url;
     Map<String, dynamic> body = payload.toMap();
     final JsonResponse resp = await post(url, body: body, headers: headers);
     //TODO
@@ -134,7 +158,8 @@ class JsonClient {
   ///
   /// \param[in] payload Authentication payload
   Future<JsonResponse> authenticateForm(AuthPayload payload,
-      {url: '/api/login', Map<String, String> headers}) async {
+      {url: '/api/login', final Map<String, String> headers}) async {
+    if (url is String && basePath is String) url = basePath + url;
     Map<String, dynamic> body = payload.toMap();
     final JsonResponse resp = await postForm(url, body: body, headers: headers);
     //TODO
@@ -145,7 +170,9 @@ class JsonClient {
   ///
   /// \param[in] payload Authentication payload
   Future<JsonResponse> authenticateBasic(AuthPayload payload,
-      {url: '/api/login', Map<String, String> headers}) async {
+      {url: '/api/login', final Map<String, String> headers}) async {
+    if (url is String && basePath is String) url = basePath + url;
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
     Map<String, dynamic> body = payload.toMap();
 
     final auth = new AuthHeaders();
@@ -153,35 +180,28 @@ class JsonClient {
         .encode('${payload.username}:${payload.password}'.codeUnits);
     auth.addItem(new AuthHeaderItem('Basic', credentials));
 
-    if (headers == null) headers = {};
+    reqHeaders["authorization"] = auth.toString();
 
-    headers[HttpHeaders.AUTHORIZATION] = auth.toString();
-
-    final JsonResponse resp = await post(url, body: body, headers: headers);
+    final JsonResponse resp = await post(url, body: body, headers: reqHeaders);
     //TODO
     return resp;
   }
 
   ResourceClient<IdType, ModelType>
       resource<IdType, ModelType extends Idied<IdType>>(
-          Serializer<ModelType> serializer, String authority,
-          {String path, StringToId<IdType> stringToId}) {
+          Serializer<ModelType> serializer,
+          {String basePath,
+          StringToId<IdType> stringToId}) {
     return new ResourceClient(client, serializer,
-        authority: authority, path: path, stringToId: stringToId);
+        basePath: basePath, stringToId: stringToId);
   }
 
   ResourceClient<IdType, ModelType>
       resourceFromRepo<IdType, ModelType extends Idied<IdType>>(
-          String authority,
-          {String path,
-          StringToId<IdType> stringToId}) {
+          {String basePath, StringToId<IdType> stringToId}) {
     return new ResourceClient(client, repo.getByType(ModelType),
-        authority: authority, path: path, stringToId: stringToId);
+        basePath: basePath, stringToId: stringToId);
   }
 
-  BasedJsonClient based(String basePath) =>
-      new BasedJsonClient(this, basePath: basePath);
-
-  PathJsonClient pathed(String authority, [String path]) =>
-      new PathJsonClient(this, authority: authority, path: path);
+  SerializedJsonClient serialized() => new SerializedJsonClient(this, basePath: basePath);
 }
