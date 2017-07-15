@@ -1,6 +1,6 @@
 name: jaguar_client
 description: Write concise JSON API clients
-version: 0.0.4-dev
+version: 0.1.0
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 homepage: https://github.com/Jaguar-dart/jaguar_client
 

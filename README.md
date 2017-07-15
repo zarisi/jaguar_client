@@ -19,6 +19,7 @@ Concise JSON client library for Dart and Jaguar based on `package:http`
 - JWT authentication support
 - `ResourceClient` to access `DataStore` or a resource
 - `SerializedJsonClient` enables writing concise REST calls
+- Persistent Cookies on Flutter and IO
 
 # Usage
 
@@ -67,3 +68,11 @@ print(resp.body);
 ## Session management
 
 > TODO
+
+# TODO
+
+-[ ] Persist cookie
+-[ ] Implement JWT authentication and authorization  
+-[ ] Middleware
+-[ ] Manage authorization through header  
+-[ ] reCAPTCHA
