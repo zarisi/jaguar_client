@@ -10,7 +10,11 @@ class JsonClient {
 
   final bool manageCookie;
 
-  final CookieStore _cookieStore = new CookieStore();
+  final CookieStore cookieStore = new CookieStore();
+
+  final Map<String, String> defaultHeaders = {};
+
+  String bearerAuthHeader;
 
   JsonClient(this.client,
       {JsonRepo repo, this.manageCookie: false, this.basePath})
@@ -21,12 +25,21 @@ class JsonClient {
     if (isReqJson) headers['content-type'] = 'application/json';
     if (isRespJson) headers['Accept'] = 'application/json';
     headers["X-Requested-With"] = "XMLHttpRequest";
-    if (manageCookie) headers['Cookie'] = _cookieStore.header;
+    if (manageCookie) headers['Cookie'] = cookieStore.header;
+
+    headers.addAll(defaultHeaders);
+
+    if(bearerAuthHeader is String) {
+      final item = new AuthHeaderItem('Bearer', bearerAuthHeader);
+      final authHeader = new AuthHeaders.fromHeaderStr(headers['authorization']);
+      authHeader.addItem(item);
+      headers['authorization'] = authHeader.toString();
+    }
   }
 
   void _processResp(http.Response resp) {
     if (manageCookie) {
-      _cookieStore.addResponse(resp);
+      cookieStore.addResponse(resp);
     }
     //    String contentType = resp.headers['content-type'];
 //    if (contentType != 'application/json' && contentType != 'text/json') {
@@ -140,17 +153,27 @@ class JsonClient {
     return new JsonResponse(resp, repo);
   }
 
+  static const String recapHeader = 'jaguar-recaptcha';
+
   /// Authenticates using JSON body
   ///
   /// \param[in] username Username for authentication
   /// \param[in] password Password for authentication
   /// \param[in] payload Extra payload
   Future<JsonResponse> authenticate(AuthPayload payload,
-      {url: '/api/login', final Map<String, String> headers}) async {
+      {url: '/api/login',
+      final Map<String, String> headers,
+      bool authHeader: false,
+      String reCaptchaResp}) async {
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
+
     if (url is String && basePath is String) url = basePath + url;
     Map<String, dynamic> body = payload.toMap();
-    final JsonResponse resp = await post(url, body: body, headers: headers);
-    //TODO
+    final JsonResponse resp = await post(url, body: body, headers: reqHeaders);
+    if (authHeader) {
+      _captureBearerHeader(resp);
+    }
     return resp;
   }
 
@@ -158,11 +181,20 @@ class JsonClient {
   ///
   /// \param[in] payload Authentication payload
   Future<JsonResponse> authenticateForm(AuthPayload payload,
-      {url: '/api/login', final Map<String, String> headers}) async {
+      {url: '/api/login',
+      final Map<String, String> headers,
+      bool authHeader: false,
+      String reCaptchaResp}) async {
+    final reqHeaders = new Map<String, String>.from(headers ?? {});
+    if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
     if (url is String && basePath is String) url = basePath + url;
+
     Map<String, dynamic> body = payload.toMap();
-    final JsonResponse resp = await postForm(url, body: body, headers: headers);
-    //TODO
+    final JsonResponse resp =
+        await postForm(url, body: body, headers: reqHeaders);
+    if (authHeader) {
+      _captureBearerHeader(resp);
+    }
     return resp;
   }
 
@@ -170,20 +202,43 @@ class JsonClient {
   ///
   /// \param[in] payload Authentication payload
   Future<JsonResponse> authenticateBasic(AuthPayload payload,
-      {url: '/api/login', final Map<String, String> headers}) async {
-    if (url is String && basePath is String) url = basePath + url;
+      {url: '/api/login',
+      final Map<String, String> headers,
+      bool authHeader: false,
+      String reCaptchaResp}) async {
     final reqHeaders = new Map<String, String>.from(headers ?? {});
+    if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
+
     Map<String, dynamic> body = payload.toMap();
 
-    final auth = new AuthHeaders();
-    String credentials = const Base64Codec.urlSafe()
-        .encode('${payload.username}:${payload.password}'.codeUnits);
-    auth.addItem(new AuthHeaderItem('Basic', credentials));
+    {
+      final auth = new AuthHeaders.fromHeaderStr(reqHeaders['authorization']);
+      String credentials = const Base64Codec.urlSafe()
+          .encode('${payload.username}:${payload.password}'.codeUnits);
+      auth.addItem(new AuthHeaderItem('Basic', credentials));
 
-    reqHeaders["authorization"] = auth.toString();
+      reqHeaders["authorization"] = auth.toString();
+    }
 
     final JsonResponse resp = await post(url, body: body, headers: reqHeaders);
-    //TODO
+    if (authHeader) {
+      _captureBearerHeader(resp);
+    }
+    return resp;
+  }
+
+  void _captureBearerHeader(JsonResponse resp) {
+    final authHeader = new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
+    bearerAuthHeader = authHeader.items['bearer']?.credentials;
+  }
+
+  Future<JsonResponse> logout(
+      {url: '/api/logout',
+      body,
+      final Map<String, String> headers,
+      bool authHeader: false}) async {
+    final JsonResponse resp = await post(url, body: body, headers: headers);
+    if (authHeader) bearerAuthHeader = null;
     return resp;
   }
 
@@ -203,5 +258,6 @@ class JsonClient {
         basePath: basePath, stringToId: stringToId);
   }
 
-  SerializedJsonClient serialized() => new SerializedJsonClient(this, basePath: basePath);
+  SerializedJsonClient serialized() =>
+      new SerializedJsonClient(this, basePath: basePath);
 }

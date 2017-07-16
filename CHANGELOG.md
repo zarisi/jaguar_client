@@ -1,5 +1,6 @@
 # Changelog
 
-## 0.0.1
+## 0.1.1
 
-- Initial version
+- Bearer auth header
+- Logout

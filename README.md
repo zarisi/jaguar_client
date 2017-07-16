@@ -71,8 +71,5 @@ print(resp.body);
 
 # TODO
 
--[ ] Persist cookie
--[ ] Implement JWT authentication and authorization  
--[ ] Middleware
--[ ] Manage authorization through header  
--[ ] reCAPTCHA
+-[ ] Persist cookie  
+-[ ] Persist auth header?
