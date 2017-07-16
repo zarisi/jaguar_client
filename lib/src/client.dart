@@ -229,7 +229,7 @@ class JsonClient {
 
   void _captureBearerHeader(JsonResponse resp) {
     final authHeader = new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
-    bearerAuthHeader = authHeader.items['bearer']?.credentials;
+    bearerAuthHeader = authHeader.items['Bearer']?.credentials;
   }
 
   Future<JsonResponse> logout(
