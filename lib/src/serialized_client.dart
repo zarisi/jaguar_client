@@ -7,54 +7,56 @@ class SerializedJsonClient {
 
   JsonRepo get repo => jClient.repo;
 
-  final String basePath;
-
   http.Client get client => jClient.client;
 
-  SerializedJsonClient(this.jClient, {this.basePath});
+  SerializedJsonClient(this.jClient);
 
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
-  Future<T> get<T>(String url, {Map<String, String> headers}) async {
+  Future<dynamic> get(String url,
+      {Map<String, String> headers, Type type}) async {
     final JsonResponse resp =
-        await jClient.get(basePath + url, headers: headers);
-    return resp.deserialize(type: T);
+        await jClient.get(url, headers: headers);
+    return resp.deserialize(type: type);
   }
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
-  Future<T> post<T>(String url,
-      {Map<String, String> headers, dynamic body}) async {
+  Future<dynamic> post(String url,
+      {Map<String, String> headers, dynamic body, Type type}) async {
     final JsonResponse resp =
-        await jClient.post(basePath + url, headers: headers, body: body);
-    return resp.deserialize(type: T);
+        await jClient.post(url, headers: headers, body: body);
+    return resp.deserialize(type: type);
   }
 
   /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
-  Future<T> put<T>(url, {Map<String, String> headers, dynamic body}) async {
+  Future<dynamic> put(url,
+      {Map<String, String> headers, dynamic body, Type type}) async {
     final JsonResponse resp =
-        await jClient.put(basePath + url, headers: headers, body: body);
-    return resp.deserialize(type: T);
+        await jClient.put(url, headers: headers, body: body);
+    return resp.deserialize(type: type);
   }
 
   /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
-  Future<T> delete<T>(url, {Map<String, String> headers, body}) async {
+  Future<dynamic> delete(url,
+      {Map<String, String> headers, body, Type type}) async {
     final JsonResponse resp =
-        await jClient.delete(basePath + url, headers: headers);
-    return resp.deserialize(type: T);
+        await jClient.delete(url, headers: headers);
+    return resp.deserialize(type: type);
   }
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
-  Future<T> postForm<T>(String url,
-      {Map<String, String> headers, dynamic body}) async {
+  Future<dynamic> postForm(String url,
+      {Map<String, String> headers, dynamic body, Type type}) async {
     final JsonResponse resp =
-        await jClient.postForm(basePath + url, headers: headers, body: body);
-    return resp.deserialize(type: T);
+        await jClient.postForm(url, headers: headers, body: body);
+    return resp.deserialize(type: type);
   }
 
   /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
-  Future<T> putForm<T>(url, {Map<String, String> headers, dynamic body}) async {
+  Future<dynamic> putForm(url,
+      {Map<String, String> headers, dynamic body, Type type}) async {
     final JsonResponse resp =
-        await jClient.putForm(basePath + url, headers: headers, body: body);
-    return resp.deserialize(type: T);
+        await jClient.putForm(url, headers: headers, body: body);
+    return resp.deserialize(type: type);
   }
 
   ResourceClient<IdType, ModelType>

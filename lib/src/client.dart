@@ -259,5 +259,5 @@ class JsonClient {
   }
 
   SerializedJsonClient serialized() =>
-      new SerializedJsonClient(this, basePath: basePath);
+      new SerializedJsonClient(this);
 }
