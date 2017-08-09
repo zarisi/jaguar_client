@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- Moved to jaguar_serializer 0.4.x
+
 ## 0.1.4
 
 - Matchers for testing

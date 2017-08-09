@@ -10,7 +10,7 @@ import 'dart:convert';
 import 'package:auth_header/auth_header.dart';
 import 'package:client_cookie/client_cookie.dart';
 
-import 'package:jaguar_serializer/serializer.dart';
+import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:jaguar_common/jaguar_common.dart';
 
 part 'authenticators.dart';
