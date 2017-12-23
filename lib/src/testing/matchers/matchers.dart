@@ -89,8 +89,8 @@ class _HasBodyStr extends Matcher {
     }
 
     final String actual = matchState["actual"];
-    descriptions.add(
-        "BodyStrings are different. Expected: $bodyStr. Actual: $actual");
+    descriptions
+        .add("BodyStrings are different. Expected: $bodyStr. Actual: $actual");
     return descriptions;
   }
 }

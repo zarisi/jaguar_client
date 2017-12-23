@@ -29,9 +29,10 @@ class JsonClient {
 
     headers.addAll(defaultHeaders);
 
-    if(bearerAuthHeader is String) {
+    if (bearerAuthHeader is String) {
       final item = new AuthHeaderItem('Bearer', bearerAuthHeader);
-      final authHeader = new AuthHeaders.fromHeaderStr(headers['authorization']);
+      final authHeader =
+          new AuthHeaders.fromHeaderStr(headers['authorization']);
       authHeader.addItem(item);
       headers['authorization'] = authHeader.toString();
     }
@@ -69,7 +70,7 @@ class JsonClient {
 
     String bodyStr;
     if (body != null) {
-      bodyStr = repo.serialize(body, withType: true);
+      bodyStr = repo.serialize(body);
     }
 
     http.Response resp =
@@ -88,7 +89,7 @@ class JsonClient {
 
     String bodyStr;
     if (body != null) {
-      bodyStr = repo.serialize(body, withType: true);
+      bodyStr = repo.serialize(body);
     }
 
     http.Response resp =
@@ -118,7 +119,7 @@ class JsonClient {
 
     Map<String, dynamic> bodyMap;
     if (body != null) {
-      bodyMap = repo.to(body, withType: true);
+      bodyMap = repo.to(body);
     }
 
     http.Response resp =
@@ -143,7 +144,7 @@ class JsonClient {
 
     Map<String, dynamic> bodyMap;
     if (body != null) {
-      bodyMap = repo.to(body, withType: true);
+      bodyMap = repo.to(body);
     }
 
     http.Response resp =
@@ -228,7 +229,8 @@ class JsonClient {
   }
 
   void _captureBearerHeader(JsonResponse resp) {
-    final authHeader = new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
+    final authHeader =
+        new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
     bearerAuthHeader = authHeader.items['Bearer']?.credentials;
   }
 
@@ -258,6 +260,5 @@ class JsonClient {
         basePath: basePath, stringToId: stringToId);
   }
 
-  SerializedJsonClient serialized() =>
-      new SerializedJsonClient(this);
+  SerializedJsonClient serialized() => new SerializedJsonClient(this);
 }

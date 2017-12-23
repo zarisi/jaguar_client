@@ -14,8 +14,7 @@ class SerializedJsonClient {
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
   Future<dynamic> get(String url,
       {Map<String, String> headers, Type type}) async {
-    final JsonResponse resp =
-        await jClient.get(url, headers: headers);
+    final JsonResponse resp = await jClient.get(url, headers: headers);
     return resp.deserialize(type: type);
   }
 
@@ -38,8 +37,7 @@ class SerializedJsonClient {
   /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
   Future<dynamic> delete(url,
       {Map<String, String> headers, body, Type type}) async {
-    final JsonResponse resp =
-        await jClient.delete(url, headers: headers);
+    final JsonResponse resp = await jClient.delete(url, headers: headers);
     return resp.deserialize(type: type);
   }
 
