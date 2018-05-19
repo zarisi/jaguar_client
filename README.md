@@ -25,7 +25,7 @@ Concise JSON client library for Dart and Jaguar based on `package:http`
 
 ## Basic requests
 
-### Get request
+GET request:
 
 ```dart
 final JsonResponse resp =
@@ -33,27 +33,11 @@ final JsonResponse resp =
 print(resp.body);
 ```
 
-### Post request
+POST request:
 
 ```dart
 final JsonResponse resp = await client
     .post('http://localhost:8080/api/map', body: {'posting': 'hello'});
-print(resp.body);
-```
-
-### Put request
-
-```dart
-final JsonResponse resp = await client
-    .put('http://localhost:8080/api/map', body: {'putting': 'hello'});
-print(resp.body);
-```
-
-### Delete request
-
-```dart
-final JsonResponse resp =
-    await client.delete('http://localhost:8080/api/map/123?query=why');
 print(resp.body);
 ```
 
