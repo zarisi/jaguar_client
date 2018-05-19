@@ -1,5 +1,6 @@
 part of http.json;
 
+/* TODO
 typedef IdType StringToId<IdType>(String idStr);
 
 class ResourceClient<IdType, ModelType extends Idied<IdType>> {
@@ -63,3 +64,4 @@ class ResourceClient<IdType, ModelType extends Idied<IdType>> {
     return resp.body;
   }
 }
+*/

@@ -1,20 +1,18 @@
 part of http.json;
 
 class AuthPayload {
-  final String username;
+  final String username, password;
 
-  final String password;
+  final Map<String, dynamic> extras;
 
-  final Map<String, dynamic> payload;
-
-  AuthPayload(this.username, this.password, {this.payload});
+  AuthPayload(this.username, this.password, {this.extras});
 
   Map<String, dynamic> toMap() {
     final ret = {
       'username': username,
       'password': password,
     };
-    if (payload is Map) ret.addAll(payload);
+    if (extras is Map) ret.addAll(extras);
     return ret;
   }
 }

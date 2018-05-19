@@ -6,40 +6,37 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:jaguar/jaguar.dart';
 import 'package:jaguar_client/jaguar_client.dart';
+import 'package:jaguar_reflect/jaguar_reflect.dart';
 
-@Api(path: '/api')
+@Controller(path: '/api')
 class ExampleApi {
-  @Get(path: '/map')
-  Response<String> getMap(Context ctx) => Response.json({
-        'jaguar': 'awesome',
-      });
+  @GetJson(path: '/map')
+  Map getMap(_) => {'jaguar': 'awesome'};
 
-  @Get(path: '/list')
-  Response<String> getList(Context ctx) => Response.json(['Hello', 'World']);
+  @GetJson(path: '/list')
+  List<String> getList(_) => ['Hello', 'World'];
 
-  @Get(path: '/string')
-  Response<String> getString(Context ctx) => Response.json("Jaguar");
+  @GetJson(path: '/string')
+  String getString(_) => "Jaguar";
 
-  @Get(path: '/header')
-  Response<String> getHeader(Context ctx) =>
-      Response.json({'testing': ctx.req.headers.value('jaguar-testing')});
+  @GetJson(path: '/header')
+  Map<String, String> getHeader(Context ctx) =>
+      {'testing': ctx.req.headers.value('jaguar-testing')};
 
-  @Post(path: '/map')
-  Future<Response<String>> postMap(Context ctx) async =>
-      Response.json(await ctx.req.bodyAsJsonMap());
+  @PostJson(path: '/map')
+  Future<Map> postMap(Context ctx) => ctx.bodyAsJsonMap();
 
-  @Put(path: '/map')
-  Future<Response<String>> putMap(Context ctx) async =>
-      Response.json(await ctx.req.bodyAsJsonMap());
+  @PutJson(path: '/map')
+  Future<Map> putMap(Context ctx) => ctx.bodyAsJsonMap();
 
-  @Delete(path: '/map/:id')
-  Response<String> deleteMap(Context ctx) =>
-      Response.json({'id': ctx.pathParams.id, 'query': ctx.queryParams.query});
+  @DeleteJson(path: '/map/:id')
+  Map deleteMap(Context ctx) =>
+      {'id': ctx.pathParams['id'], 'query': ctx.query['query']};
 }
 
 Future serve() async {
   Jaguar server = new Jaguar();
-  server.addApiReflected(new ExampleApi());
+  server.add(reflect(new ExampleApi()));
   await server.serve();
 }
 
@@ -48,7 +45,8 @@ Future client() async {
   final JsonClient client = new JsonClient(baseClient);
 
   {
-    final JsonResponse resp = await client.get('http://localhost:8080/api/map');
+    final JsonResponse resp =
+        await client.get('http://localhost:8080/api/map');
     print(resp.body);
   }
 

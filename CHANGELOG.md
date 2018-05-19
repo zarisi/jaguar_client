@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
++ Uses `jaguar_resty` under the hood
+
 ## 0.1.5
 
 - Moved to jaguar_serializer 0.4.x

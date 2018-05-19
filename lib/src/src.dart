@@ -4,11 +4,12 @@
 library http.json;
 
 import 'dart:async';
+import 'package:async/async.dart';
+import 'package:jaguar_resty/jaguar_resty.dart' as resty;
+
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import 'package:auth_header/auth_header.dart';
-import 'package:client_cookie/client_cookie.dart';
 
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:jaguar_common/jaguar_common.dart';
@@ -18,4 +19,3 @@ part 'client.dart';
 part 'response.dart';
 part 'resource.dart';
 part 'serialized_client.dart';
-part 'session_manager.dart';

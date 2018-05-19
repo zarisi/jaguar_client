@@ -5,3 +5,4 @@
 library jaguar_client;
 
 export 'src/src.dart';
+export 'package:jaguar_resty/jaguar_resty.dart';

@@ -1,5 +1,6 @@
 part of http.json;
 
+/* TODO
 /// Json client with a base path
 class SerializedJsonClient {
   /// The underlying http client used to make the requests
@@ -73,3 +74,4 @@ class SerializedJsonClient {
         basePath: basePath, stringToId: stringToId);
   }
 }
+*/

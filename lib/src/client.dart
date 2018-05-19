@@ -10,123 +10,137 @@ class JsonClient {
 
   final bool manageCookie;
 
-  final CookieStore cookieStore = new CookieStore();
-
   final Map<String, String> defaultHeaders = {};
 
   String bearerAuthHeader;
 
-  JsonClient(this.client,
-      {JsonRepo repo, this.manageCookie: false, this.basePath})
-      : repo = repo ?? new JsonRepo();
+  final resty.CookieJar jar = new resty.CookieJar();
 
-  void _addHeaders(final Map<String, String> headers,
-      {bool isReqJson: true, bool isRespJson: true}) {
-    if (isReqJson) headers['content-type'] = 'application/json';
-    if (isRespJson) headers['Accept'] = 'application/json';
-    headers["X-Requested-With"] = "XMLHttpRequest";
-    if (manageCookie) headers['Cookie'] = cookieStore.header;
-
-    headers.addAll(defaultHeaders);
-
-    if (bearerAuthHeader is String) {
-      final item = new AuthHeaderItem('Bearer', bearerAuthHeader);
-      final authHeader =
-          new AuthHeaders.fromHeaderStr(headers['authorization']);
-      authHeader.addItem(item);
-      headers['authorization'] = authHeader.toString();
-    }
-  }
-
-  void _processResp(http.Response resp) {
-    if (manageCookie) {
-      cookieStore.addResponse(resp);
-    }
-    //    String contentType = resp.headers['content-type'];
-//    if (contentType != 'application/json' && contentType != 'text/json') {
-//      throw new Exception(
-//          "Invalid mimetype $contentType returned for JSON request!");
-//    }
-  }
+  JsonClient(this.client, {this.repo, this.manageCookie: false, this.basePath});
 
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> get(url, {final Map<String, String> headers}) async {
+  AsyncJsonResponse get(url,
+      {final Map<String, String> headers,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders);
+    Uri uri = Uri.parse(url);
 
-    http.Response resp = await client.get(url, headers: reqHeaders);
-    _processResp(resp);
+    final item = new resty.Get(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
 
-    return new JsonResponse(resp, repo);
+    _addHeaders(item);
+
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
+
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
   /// Issues a JSON POST request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> post(url,
-      {final Map<String, String> headers, body}) async {
+  AsyncJsonResponse post(url,
+      {final Map<String, String> headers,
+      body,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders);
+    Uri uri = Uri.parse(url);
 
-    String bodyStr;
+    final item = new resty.Post(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
+
+    _addHeaders(item);
+
     if (body != null) {
-      bodyStr = repo.serialize(body);
+      if (repo != null)
+        item.json(repo.to(body));
+      else
+        item.json(body);
     }
 
-    http.Response resp =
-        await client.post(url, headers: reqHeaders, body: bodyStr);
-    _processResp(resp);
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
 
-    return new JsonResponse(resp, repo);
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
-  /// Issues a JSON PUT request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> put(url,
-      {final Map<String, String> headers, body}) async {
+  /// Issues a JSON PUT request and returns decoded JSON response as
+  /// [JsonResponse]
+  AsyncJsonResponse put(url,
+      {final Map<String, String> headers,
+      body,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders);
+    Uri uri = Uri.parse(url);
 
-    String bodyStr;
+    final item = new resty.Put(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
+
+    _addHeaders(item);
+
     if (body != null) {
-      bodyStr = repo.serialize(body);
+      if (repo != null)
+        item.json(repo.serialize(body));
+      else
+        item.json(body);
     }
 
-    http.Response resp =
-        await client.put(url, headers: reqHeaders, body: bodyStr);
-    _processResp(resp);
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
 
-    return new JsonResponse(resp, repo);
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
-  /// Issues a JSON DELETE request and returns decoded JSON response as [JsonResponse]
-  Future<JsonResponse> delete(url, {final Map<String, String> headers}) async {
+  /// Issues a JSON DELETE request and returns decoded JSON response as
+  /// [JsonResponse]
+  AsyncJsonResponse delete(url,
+      {final Map<String, String> headers,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders);
+    Uri uri = Uri.parse(url);
 
-    http.Response resp = await client.delete(url, headers: reqHeaders);
-    _processResp(resp);
+    final item = new resty.Delete(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
 
-    return new JsonResponse(resp, repo);
+    _addHeaders(item);
+
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
+
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
-  Future<JsonResponse> postForm(url,
-      {final Map<String, String> headers, body}) async {
+  AsyncJsonResponse postForm(url,
+      {final Map<String, String> headers,
+      body,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders, isReqJson: false);
+    Uri uri = Uri.parse(url);
 
-    Map<String, dynamic> bodyMap;
+    final item = new resty.Post(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
+
+    _addHeaders(item);
+
     if (body != null) {
-      bodyMap = repo.to(body);
+      if (repo != null)
+        item.urlEncodedForm(repo.to(body));
+      else
+        item.urlEncodedForm(body);
     }
 
-    http.Response resp =
-        await client.post(url, headers: reqHeaders, body: bodyMap);
-    _processResp(resp);
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
 
-    return new JsonResponse(resp, repo);
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
   /// Issues a JSON PUT request with url-encoded-form body and returns decoded
@@ -136,22 +150,31 @@ class JsonClient {
   /// [headers] parameters can be used to add HTTP headers
   /// [body] can be a Dart built-in type or any PODO object. If it is PODO, [repo]
   /// is used to serialize the object
-  Future<JsonResponse> putForm(url,
-      {final Map<String, String> headers, body}) async {
+  AsyncJsonResponse putForm(url,
+      {final Map<String, String> headers,
+      body,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    _addHeaders(reqHeaders);
+    Uri uri = Uri.parse(url);
 
-    Map<String, dynamic> bodyMap;
+    final item = new resty.Put(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+    if (headers != null) item.headers(headers);
+
+    _addHeaders(item);
+
     if (body != null) {
-      bodyMap = repo.to(body);
+      if (repo != null)
+        item.urlEncodedForm(repo.to(body));
+      else
+        item.urlEncodedForm(body);
     }
 
-    http.Response resp =
-        await client.put(url, headers: reqHeaders, body: bodyMap);
-    _processResp(resp);
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
 
-    return new JsonResponse(resp, repo);
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
   static const String recapHeader = 'jaguar-recaptcha';
@@ -161,89 +184,129 @@ class JsonClient {
   /// \param[in] username Username for authentication
   /// \param[in] password Password for authentication
   /// \param[in] payload Extra payload
-  Future<JsonResponse> authenticate(AuthPayload payload,
+  AsyncJsonResponse authenticate(AuthPayload payload,
       {url: '/api/login',
       final Map<String, String> headers,
-      bool authHeader: false,
-      String reCaptchaResp}) async {
+      bool captureAuthToken: false,
+      String reCaptchaResp,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
+    if (url is String && basePath is String) url = basePath + url;
+    Uri uri = Uri.parse(url);
+
+    final item = new resty.Post(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
+    item.headers(reqHeaders);
 
-    if (url is String && basePath is String) url = basePath + url;
-    Map<String, dynamic> body = payload.toMap();
-    final JsonResponse resp = await post(url, body: body, headers: reqHeaders);
-    if (authHeader) {
-      _captureBearerHeader(resp);
-    }
-    return resp;
+    _addHeaders(item);
+
+    item.json(payload.toMap());
+
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
+
+    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
   /// Authenticates using url-encoded-form
   ///
   /// \param[in] payload Authentication payload
-  Future<JsonResponse> authenticateForm(AuthPayload payload,
+  AsyncJsonResponse authenticateForm(AuthPayload payload,
       {url: '/api/login',
       final Map<String, String> headers,
-      bool authHeader: false,
-      String reCaptchaResp}) async {
+      bool captureAuthToken: false,
+      String reCaptchaResp,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
+    if (url is String && basePath is String) url = basePath + url;
+    Uri uri = Uri.parse(url);
+
+    final item = new resty.Post(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
+
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
-    if (url is String && basePath is String) url = basePath + url;
+    if (headers != null) item.headers(reqHeaders);
 
-    Map<String, dynamic> body = payload.toMap();
-    final JsonResponse resp =
-        await postForm(url, body: body, headers: reqHeaders);
-    if (authHeader) {
-      _captureBearerHeader(resp);
-    }
-    return resp;
+    _addHeaders(item);
+
+    item.urlEncodedForm(payload.toMap());
+
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
+
+    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
   /// Authenticates using Basic Authentication
   ///
   /// \param[in] payload Authentication payload
-  Future<JsonResponse> authenticateBasic(AuthPayload payload,
+  AsyncJsonResponse authenticateBasic(AuthPayload payload,
       {url: '/api/login',
       final Map<String, String> headers,
-      bool authHeader: false,
-      String reCaptchaResp}) async {
-    final reqHeaders = new Map<String, String>.from(headers ?? {});
-    if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
+      bool captureAuthToken: false,
+      String reCaptchaResp,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
+    if (url is String && basePath is String) url = basePath + url;
+    Uri uri = Uri.parse(url);
 
-    Map<String, dynamic> body = payload.toMap();
+    final item = new resty.Post(uri.path).withClient(client);
+    if (uri.hasAuthority) item.origin(uri.origin);
 
-    {
-      final auth = new AuthHeaders.fromHeaderStr(reqHeaders['authorization']);
-      String credentials = const Base64Codec.urlSafe()
-          .encode('${payload.username}:${payload.password}'.codeUnits);
-      auth.addItem(new AuthHeaderItem('Basic', credentials));
+    if (headers != null) item.headers(headers);
+    if (reCaptchaResp is String) item.header('recapHeader', reCaptchaResp);
 
-      reqHeaders["authorization"] = auth.toString();
-    }
+    _addHeaders(item);
 
-    final JsonResponse resp = await post(url, body: body, headers: reqHeaders);
-    if (authHeader) {
-      _captureBearerHeader(resp);
-    }
-    return resp;
+    if (payload.extras != null) item.json(payload.extras);
+
+    before.forEach(item.interceptBefore);
+    after.forEach(item.interceptAfter);
+
+    item.setBasicAuth(payload.username, payload.password);
+
+    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+
+    return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
 
-  void _captureBearerHeader(JsonResponse resp) {
-    final authHeader =
-        new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
-    bearerAuthHeader = authHeader.items['Bearer']?.credentials;
-  }
-
-  Future<JsonResponse> logout(
+  AsyncJsonResponse logout(
       {url: '/api/logout',
       body,
       final Map<String, String> headers,
-      bool authHeader: false}) async {
-    final JsonResponse resp = await post(url, body: body, headers: headers);
-    if (authHeader) bearerAuthHeader = null;
-    return resp;
+      bool removeAuthToken: false,
+      List<resty.Before> before: const [],
+      List<resty.After> after: const []}) {
+    final AsyncJsonResponse ret =
+        post(url, body: body, headers: headers, before: before, after: after);
+    if (removeAuthToken) ret.onSuccess((_) => bearerAuthHeader = null);
+    return ret;
   }
 
+  void _captureBearerHeader(resty.Response resp) {
+    final authHeader =
+    new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
+    bearerAuthHeader = authHeader.items['Bearer']?.credentials;
+  }
+
+  void _addHeaders(resty.RouteBase route) {
+    route.header("X-Requested-With", "XMLHttpRequest");
+    route.headers(defaultHeaders);
+
+    if (manageCookie) route.interceptBefore(jar.intercept);
+
+    if (bearerAuthHeader is String) route.setAuthToken(bearerAuthHeader);
+  }
+
+  /* TODO
   ResourceClient<IdType, ModelType>
       resource<IdType, ModelType extends Idied<IdType>>(
           Serializer<ModelType> serializer,
@@ -261,4 +324,5 @@ class JsonClient {
   }
 
   SerializedJsonClient serialized() => new SerializedJsonClient(this);
+  */
 }
