@@ -300,6 +300,7 @@ class JsonClient {
   void _addHeaders(resty.RouteBase route) {
     route.header("X-Requested-With", "XMLHttpRequest");
     route.headers(defaultHeaders);
+    route.header('Accept', 'application/json');
 
     if (manageCookie) route.interceptBefore(jar.intercept);
 
