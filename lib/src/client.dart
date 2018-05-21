@@ -28,6 +28,7 @@ class JsonClient {
 
     final item = new resty.Get(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -49,6 +50,7 @@ class JsonClient {
 
     final item = new resty.Post(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -78,6 +80,7 @@ class JsonClient {
 
     final item = new resty.Put(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -106,6 +109,7 @@ class JsonClient {
 
     final item = new resty.Delete(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -126,6 +130,7 @@ class JsonClient {
 
     final item = new resty.Post(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -160,6 +165,7 @@ class JsonClient {
 
     final item = new resty.Put(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -196,6 +202,7 @@ class JsonClient {
 
     final item = new resty.Post(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
 
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
@@ -228,6 +235,7 @@ class JsonClient {
 
     final item = new resty.Post(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
 
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
@@ -260,6 +268,7 @@ class JsonClient {
 
     final item = new resty.Post(uri.path).withClient(client);
     if (uri.hasAuthority) item.origin(uri.origin);
+    item.queries(uri.queryParametersAll);
 
     if (headers != null) item.headers(headers);
     if (reCaptchaResp is String) item.header('recapHeader', reCaptchaResp);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.4
+
++ Query parameters bug fix
+
 ## 2.0.2
 
 + Uses `jaguar_resty` under the hood
