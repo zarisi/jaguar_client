@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.8
+
++ Casting bug fixes
+
 ## 2.0.5
 
 + resty 2.5.1

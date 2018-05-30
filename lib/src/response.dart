@@ -68,16 +68,16 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
 
   resty.AsyncTResponse<T> json<T>([T convert(Map d)]) =>
       new resty.AsyncTResponse<T>(
-          then((resty.StringResponse r) => r.json(convert)));
+          then((resty.StringResponse r) => r.json<T>(convert)));
 
   resty.AsyncTResponse<List<T>> jsonList<T>([T convert(Map d)]) =>
       new resty.AsyncTResponse<List<T>>(
-          then((resty.StringResponse r) => r.jsonList(convert)));
+          then((resty.StringResponse r) => r.jsonList<T>(convert)));
 
-  Future<T> decode<T>([T convert(Map d)]) => then((r) => r.decode(convert));
+  Future<T> decode<T>([T convert(Map d)]) => then((r) => r.decode<T>(convert));
 
   Future<List<T>> decodeList<T>([T convert(Map d)]) =>
-      then((resty.StringResponse r) => r.decodeList(convert));
+      then((resty.StringResponse r) => r.decodeList<T>(convert));
 
   /// Runs [func] with [Response] object after request completion
   AsyncJsonResponse run(resty.After<String> func) =>
@@ -177,10 +177,11 @@ class JsonResponse extends resty.StringResponse {
     return super.decodeList<T>();
   }
 
-  T withSerializer<T>(Serializer<T> serializer) => decode(serializer.fromMap);
+  T withSerializer<T>(Serializer<T> serializer) =>
+      decode<T>(serializer.fromMap);
 
   List<T> listWithSerializer<T>(Serializer<T> serializer) =>
-      decodeList(serializer.fromMap);
+      decodeList<T>(serializer.fromMap);
 
   T withRepo<T>(JsonRepo repo) => repo.deserialize(body, type: T);
 
