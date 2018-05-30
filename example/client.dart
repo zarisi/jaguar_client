@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:jaguar/jaguar.dart';
 import 'package:jaguar_client/jaguar_client.dart';
 import 'package:jaguar_reflect/jaguar_reflect.dart';
+import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 @Controller(path: '/api')
 class ExampleApi {
@@ -32,6 +33,9 @@ class ExampleApi {
   @DeleteJson(path: '/map/:id')
   Map deleteMap(Context ctx) =>
       {'id': ctx.pathParams['id'], 'query': ctx.query['query']};
+
+  @GetJson(path: '/bool')
+  bool get(Context ctx) => false;
 }
 
 Future serve() async {
@@ -42,11 +46,10 @@ Future serve() async {
 
 Future client() async {
   final http.Client baseClient = new http.Client();
-  final JsonClient client = new JsonClient(baseClient);
+  final JsonClient client = new JsonClient(baseClient, repo: new JsonRepo());
 
   {
-    final JsonResponse resp =
-        await client.get('http://localhost:8080/api/map');
+    final JsonResponse resp = await client.get('http://localhost:8080/api/map');
     print(resp.body);
   }
 
@@ -85,6 +88,12 @@ Future client() async {
     final JsonResponse resp =
         await client.delete('http://localhost:8080/api/map/123?query=why');
     print(resp.body);
+  }
+
+  {
+    final JsonResponse resp =
+        await client.get('http://localhost:8080/api/bool');
+    print(resp.decode<bool>());
   }
 }
 

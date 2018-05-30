@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5
+
++ resty 2.5.1
+
 ## 2.0.4
 
 + Query parameters bug fix

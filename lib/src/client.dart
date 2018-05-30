@@ -46,11 +46,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Post(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Post(url).withClient(client);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -76,18 +72,14 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Put(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Put(url).withClient(client);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
 
     if (body != null) {
       if (repo != null)
-        item.json(repo.serialize(body));
+        item.json(repo.to(body));
       else
         item.json(body);
     }
@@ -105,11 +97,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Delete(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Delete(url).withClient(client);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -126,11 +114,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Post(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Post(url).withClient(client);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -161,11 +145,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Put(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Put(url).withClient(client);
     if (headers != null) item.headers(headers);
 
     _addHeaders(item);
@@ -198,11 +178,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Post(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
+    final item = new resty.Post(url).withClient(client);
 
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
@@ -231,12 +207,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Post(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
-
+    final item = new resty.Post(url).withClient(client);
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
     if (headers != null) item.headers(reqHeaders);
@@ -264,12 +235,7 @@ class JsonClient {
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
     if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
-
-    final item = new resty.Post(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
-
+    final item = new resty.Post(url).withClient(client);
     if (headers != null) item.headers(headers);
     if (reCaptchaResp is String) item.header('recapHeader', reCaptchaResp);
 
