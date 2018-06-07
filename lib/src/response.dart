@@ -167,13 +167,13 @@ class JsonResponse extends resty.StringResponse {
 
   T decode<T>([T convert(Map<String, dynamic> d)]) {
     if (convert != null) return super.decode<T>(convert);
-    if (repo != null) return repo.deserialize(body, type: T);
+    if (repo != null) return repo.decodeOne<T>(body);
     return super.decode<T>();
   }
 
   List<T> decodeList<T>([T convert(Map<String, dynamic> d)]) {
     if (convert != null) return super.decodeList<T>(convert);
-    if (repo != null) return super.decodeList((Map v) => repo.from(v, type: T));
+    if (repo != null) return repo.decodeList<T>(body);
     return super.decodeList<T>();
   }
 
@@ -183,10 +183,9 @@ class JsonResponse extends resty.StringResponse {
   List<T> listWithSerializer<T>(Serializer<T> serializer) =>
       decodeList<T>(serializer.fromMap);
 
-  T withRepo<T>(JsonRepo repo) => repo.deserialize(body, type: T);
+  T withRepo<T>(JsonRepo repo) => repo.decodeOne<T>(body);
 
-  List<T> listWithRepo<T>(JsonRepo repo) =>
-      decodeList<T>((Map v) => repo.from(v, type: T));
+  List<T> listWithRepo<T>(JsonRepo repo) => repo.decodeList<T>(body);
 
   JsonResponse expect(List<resty.Checker<resty.Response<String>>> conditions) =>
       super.expect(conditions);

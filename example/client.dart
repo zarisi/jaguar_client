@@ -39,7 +39,7 @@ class ExampleApi {
 }
 
 Future serve() async {
-  Jaguar server = new Jaguar();
+  Jaguar server = new Jaguar(port: 10123);
   server.add(reflect(new ExampleApi()));
   await server.serve();
 }
@@ -49,50 +49,50 @@ Future client() async {
   final JsonClient client = new JsonClient(baseClient, repo: new JsonRepo());
 
   {
-    final JsonResponse resp = await client.get('http://localhost:8080/api/map');
+    final JsonResponse resp = await client.get('http://localhost:10123/api/map');
     print(resp.body);
   }
 
   {
     final JsonResponse resp =
-        await client.get('http://localhost:8080/api/list');
+        await client.get('http://localhost:10123/api/list');
     print(resp.body);
   }
 
   {
     final JsonResponse resp =
-        await client.get('http://localhost:8080/api/string');
+        await client.get('http://localhost:10123/api/string');
     print(resp.body);
   }
 
   {
     final JsonResponse resp = await client.get(
-        'http://localhost:8080/api/header',
+        'http://localhost:10123/api/header',
         headers: {'jaguar-testing': 'testing 1 2 3'});
     print(resp.body);
   }
 
   {
     final JsonResponse resp = await client
-        .post('http://localhost:8080/api/map', body: {'posting': 'hello'});
+        .post('http://localhost:10123/api/map', body: {'posting': 'hello'});
     print(resp.body);
   }
 
   {
     final JsonResponse resp = await client
-        .put('http://localhost:8080/api/map', body: {'putting': 'hello'});
+        .put('http://localhost:10123/api/map', body: {'putting': 'hello'});
     print(resp.body);
   }
 
   {
     final JsonResponse resp =
-        await client.delete('http://localhost:8080/api/map/123?query=why');
+        await client.delete('http://localhost:10123/api/map/123?query=why');
     print(resp.body);
   }
 
   {
     final JsonResponse resp =
-        await client.get('http://localhost:8080/api/bool');
+        await client.get('http://localhost:10123/api/bool');
     print(resp.decode<bool>());
   }
 }
